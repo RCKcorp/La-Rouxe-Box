@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Rouxe Box</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body {
+      background: linear-gradient(135deg, #111827, #1f2937);
+      color: white;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 2rem;
+      color: #f59e0b;
+    }
+    .subtitle {
+      text-align: center;
+      color: #d1d5db;
+      margin-bottom: 24px;
+    }
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+    }
+    .panel {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    h2 { margin-bottom: 16px; color: #fbbf24; }
+    .player-card {
+      background: rgba(0,0,0,0.25);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .current-track { font-size: 1.2rem; font-weight: bold; margin-bottom: 8px; }
+    .current-status { color: #d1d5db; margin-bottom: 16px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+    button:hover { transform: translateY(-2px); opacity: .95; }
+    .btn-primary { background: #f59e0b; color: #111827; }
+    .btn-secondary { background: #374151; color: white; }
+    .btn-danger { background: #dc2626; color: white; }
+    label { display: block; margin-bottom: 6px; color: #d1d5db; font-size: .9rem; }
+    input[type="range"] { width: 100%; cursor: pointer; }
+    .progress-wrapper, .volume-wrapper { margin-bottom: 16px; }
+    .playlist { display: grid; gap: 10px; max-height: 520px; overflow-y: auto; padding-right: 6px; }
+    .track-item {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .track-info { display: flex; flex-direction: column; gap: 4px; }
+    .track-title { font-weight: bold; }
+    .track-subtitle { font-size: .85rem; color: #9ca3af; }
+    .soundboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .sfx-btn {
+      min-height: 78px;
+      font-size: 1rem;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border-radius: 16px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 8px 18px rgba(0,0,0,0.2);
+    }
+    .footer-note {
+      margin-top: 16px;
+      color: #9ca3af;
+      font-size: .9rem;
+      line-height: 1.5;
+    }
+    code {
+      background: rgba(255,255,255,0.08);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+    @media (max-width: 980px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      body { padding: 14px; }
+      .soundboard-grid { grid-template-columns: 1fr; }
+      .controls { flex-direction: column; }
+      button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎵 La Rouxe Box</h1>
+  <div class="subtitle">Jukebox & bruitages pour le défilé</div>
+
+  <div class="container">
+    <section class="panel">
+      <h2>Lecteur principal</h2>
+      <div class="player-card">
+        <div class="current-track" id="currentTrack">Aucune musique sélectionnée</div>
+        <div class="current-status" id="currentStatus">Choisis une musique dans la playlist</div>
+
+        <div class="controls">
+          <button class="btn-primary" id="playBtn">▶ Lecture</button>
+          <button class="btn-secondary" id="pauseBtn">⏸ Pause</button>
+          <button class="btn-secondary" id="prevBtn">⏮ Précédent</button>
+          <button class="btn-secondary" id="nextBtn">⏭ Suivant</button>
+          <button class="btn-danger" id="stopBtn">⏹ Stop</button>
+        </div>
+
+        <div class="progress-wrapper">
+          <label for="progressBar">Progression</label>
+          <input type="range" id="progressBar" min="0" max="100" value="0" />
+        </div>
+
+        <div class="volume-wrapper">
+          <label for="volumeBar">Volume musique</label>
+          <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="0.8" />
+        </div>
+      </div>
+
+      <h2>Playlist</h2>
+      <div class="playlist" id="playlist"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Bruitages</h2>
+      <div class="soundboard-grid" id="soundboard"></div>
+      <p class="footer-note">
+        Remplace les chemins des fichiers audio dans le JavaScript par tes vrais fichiers <code>.mp3</code> ou <code>.wav</code>.
+        Dépose ensuite tes morceaux dans <code>audio/</code> et tes bruitages dans <code>sfx/</code>.
+      </p>
+    </section>
+  </div>
+
+  <audio id="mainAudio"></audio>
+
+  <script>
+    const tracks = [
+      { title: 'Musique 01', artist: 'La Rouxe', file: 'audio/musique01.mp3' },
+      { title: 'Musique 02', artist: 'La Rouxe', file: 'audio/musique02.mp3' },
+      { title: 'Musique 03', artist: 'La Rouxe', file: 'audio/musique03.mp3' },
+      { title: 'Musique 04', artist: 'La Rouxe', file: 'audio/musique04.mp3' },
+      { title: 'Musique 05', artist: 'La Rouxe', file: 'audio/musique05.mp3' },
+      { title: 'Musique 06', artist: 'La Rouxe', file: 'audio/musique06.mp3' },
+      { title: 'Musique 07', artist: 'La Rouxe', file: 'audio/musique07.mp3' },
+      { title: 'Musique 08', artist: 'La Rouxe', file: 'audio/musique08.mp3' },
+      { title: 'Musique 09', artist: 'La Rouxe', file: 'audio/musique09.mp3' },
+      { title: 'Musique 10', artist: 'La Rouxe', file: 'audio/musique10.mp3' },
+      { title: 'Musique 11', artist: 'La Rouxe', file: 'audio/musique11.mp3' },
+      { title: 'Musique 12', artist: 'La Rouxe', file: 'audio/musique12.mp3' },
+      { title: 'Musique 13', artist: 'La Rouxe', file: 'audio/musique13.mp3' },
+      { title: 'Musique 14', artist: 'La Rouxe', file: 'audio/musique14.mp3' },
+      { title: 'Musique 15', artist: 'La Rouxe', file: 'audio/musique15.mp3' },
+      { title: 'Musique 16', artist: 'La Rouxe', file: 'audio/musique16.mp3' },
+      { title: 'Musique 17', artist: 'La Rouxe', file: 'audio/musique17.mp3' },
+      { title: 'Musique 18', artist: 'La Rouxe', file: 'audio/musique18.mp3' },
+      { title: 'Musique 19', artist: 'La Rouxe', file: 'audio/musique19.mp3' },
+      { title: 'Musique 20', artist: 'La Rouxe', file: 'audio/musique20.mp3' }
+    ];
+
+    const soundEffects = [
+      { name: '🔊 Air Horn', file: 'sfx/airhorn.mp3' },
+      { name: '👏 Applaudissements', file: 'sfx/applaudissements.mp3' },
+      { name: '😂 Rire', file: 'sfx/rire.mp3' },
+      { name: '🥁 Roulement', file: 'sfx/roulement.mp3' },
+      { name: '❌ Buzzer', file: 'sfx/buzzer.mp3' },
+      { name: '🎉 Fête', file: 'sfx/fete.mp3' },
+      { name: '🚨 Alerte', file: 'sfx/alerte.mp3' },
+      { name: '👻 Suspense', file: 'sfx/suspense.mp3' },
+      { name: '💥 Explosion', file: 'sfx/explosion.mp3' },
+      { name: '🐓 Cocorico', file: 'sfx/cocorico.mp3' }
+    ];
+
+    const mainAudio = document.getElementById('mainAudio');
+    const playlist = document.getElementById('playlist');
+    const soundboard = document.getElementById('soundboard');
+    const currentTrack = document.getElementById('currentTrack');
+    const currentStatus = document.getElementById('currentStatus');
+    const progressBar = document.getElementById('progressBar');
+    const volumeBar = document.getElementById('volumeBar');
+    let currentIndex = 0;
+
+    function renderPlaylist() {
+      playlist.innerHTML = '';
+      tracks.forEach((track, index) => {
+        const item = document.createElement('div');
+        item.className = 'track-item';
+        item.innerHTML = `
+          <div class="track-info">
+            <div class="track-title">${track.title}</div>
+            <div class="track-subtitle">${track.artist}</div>
+          </div>
+          <button class="btn-primary">Jouer</button>
+        `;
+        item.querySelector('button').addEventListener('click', () => {
+          loadTrack(index);
+          mainAudio.play();
+          currentStatus.textContent = 'Lecture en cours';
+        });
+        playlist.appendChild(item);
+      });
+    }
+
+    function renderSoundboard() {
+      soundboard.innerHTML = '';
+      soundEffects.forEach((effect) => {
+        const btn = document.createElement('button');
+        btn.className = 'sfx-btn';
+        btn.textContent = effect.name;
+        btn.addEventListener('click', () => {
+          const sfx = new Audio(effect.file);
+          sfx.volume = 1;
+          sfx.play();
+        });
+        soundboard.appendChild(btn);
+      });
+    }
+
+    function loadTrack(index) {
+      currentIndex = index;
+      mainAudio.src = tracks[index].file;
+      currentTrack.textContent = `${tracks[index].title} — ${tracks[index].artist}`;
+      currentStatus.textContent = 'Prête à être lue';
+      progressBar.value = 0;
+    }
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+      if (!mainAudio.src) loadTrack(currentIndex);
+      mainAudio.play();
+      currentStatus.textContent = 'Lecture en cours';
+    });
+
+    document.getElementById('pauseBtn').addEventListener('click', () => {
+      mainAudio.pause();
+      currentStatus.textContent = 'En pause';
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', () => {
+      mainAudio.pause();
+      mainAudio.currentTime = 0;
+      currentStatus.textContent = 'Arrêtée';
+      progressBar.value = 0;
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + tracks.length) % tracks.length;
+      loadTrack(currentIndex);
+      mainAudio.play();
+      currentStatus.textContent = 'Lecture en cours';
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % tracks.length;
+      loadTrack(currentIndex);
+      mainAudio.play();
+      currentStatus.textContent = 'Lecture en cours';
+    });
+
+    volumeBar.addEventListener('input', () => {
+      mainAudio.volume = volumeBar.value;
+    });
+
+    mainAudio.addEventListener('timeupdate', () => {
+      if (!isNaN(mainAudio.duration) && mainAudio.duration > 0) {
+        progressBar.value = (mainAudio.currentTime / mainAudio.duration) * 100;
+      }
+    });
+
+    progressBar.addEventListener('input', () => {
+      if (!isNaN(mainAudio.duration) && mainAudio.duration > 0) {
+        mainAudio.currentTime = (progressBar.value / 100) * mainAudio.duration;
+      }
+    });
+
+    mainAudio.addEventListener('ended', () => {
+      currentIndex = (currentIndex + 1) % tracks.length;
+      loadTrack(currentIndex);
+      mainAudio.play();
+      currentStatus.textContent = 'Lecture en cours';
+    });
+
+    mainAudio.volume = volumeBar.value;
+    renderPlaylist();
+    renderSoundboard();
+    loadTrack(0);
+  </script>
+</body>
+</html>
