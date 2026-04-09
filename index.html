@@ -12,17 +12,8 @@
       min-height: 100vh;
       padding: 24px;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 24px;
-      font-size: 2rem;
-      color: #f59e0b;
-    }
-    .subtitle {
-      text-align: center;
-      color: #d1d5db;
-      margin-bottom: 24px;
-    }
+    h1 { text-align: center; margin-bottom: 24px; font-size: 2rem; color: #f59e0b; }
+    .subtitle { text-align: center; color: #d1d5db; margin-bottom: 24px; }
     .container {
       max-width: 1300px;
       margin: 0 auto;
@@ -85,20 +76,9 @@
       border-radius: 16px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 8px 18px rgba(0,0,0,0.2);
     }
-    .footer-note {
-      margin-top: 16px;
-      color: #9ca3af;
-      font-size: .9rem;
-      line-height: 1.5;
-    }
-    code {
-      background: rgba(255,255,255,0.08);
-      padding: 2px 6px;
-      border-radius: 8px;
-    }
-    @media (max-width: 980px) {
-      .container { grid-template-columns: 1fr; }
-    }
+    .footer-note { margin-top: 16px; color: #9ca3af; font-size: .9rem; line-height: 1.5; }
+    code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 8px; }
+    @media (max-width: 980px) { .container { grid-template-columns: 1fr; } }
     @media (max-width: 600px) {
       body { padding: 14px; }
       .soundboard-grid { grid-template-columns: 1fr; }
@@ -115,8 +95,8 @@
     <section class="panel">
       <h2>Lecteur principal</h2>
       <div class="player-card">
-        <div class="current-track" id="currentTrack">Aucune musique sélectionnée</div>
-        <div class="current-status" id="currentStatus">Choisis une musique dans la playlist</div>
+        <div class="current-track" id="currentTrack">Chargement des musiques...</div>
+        <div class="current-status" id="currentStatus">Préparation de la playlist</div>
 
         <div class="controls">
           <button class="btn-primary" id="playBtn">▶ Lecture</button>
@@ -145,8 +125,7 @@
       <h2>Bruitages</h2>
       <div class="soundboard-grid" id="soundboard"></div>
       <p class="footer-note">
-        Remplace les chemins des fichiers audio dans le JavaScript par tes vrais fichiers <code>.mp3</code> ou <code>.wav</code>.
-        Dépose ensuite tes morceaux dans <code>audio/</code> et tes bruitages dans <code>sfx/</code>.
+        Pour ajouter des sons, mets tes fichiers dans <code>audio/</code> ou <code>sfx/</code>, puis ajoute juste une ligne dans <code>tracks.json</code> ou <code>sfx.json</code>.
       </p>
     </section>
   </div>
@@ -154,42 +133,8 @@
   <audio id="mainAudio"></audio>
 
   <script>
-    const tracks = [
-      { title: 'Musique 01', artist: 'La Rouxe', file: 'audio/musique01.mp3' },
-      { title: 'Musique 02', artist: 'La Rouxe', file: 'audio/musique02.mp3' },
-      { title: 'Musique 03', artist: 'La Rouxe', file: 'audio/musique03.mp3' },
-      { title: 'Musique 04', artist: 'La Rouxe', file: 'audio/musique04.mp3' },
-      { title: 'Musique 05', artist: 'La Rouxe', file: 'audio/musique05.mp3' },
-      { title: 'Musique 06', artist: 'La Rouxe', file: 'audio/musique06.mp3' },
-      { title: 'Musique 07', artist: 'La Rouxe', file: 'audio/musique07.mp3' },
-      { title: 'Musique 08', artist: 'La Rouxe', file: 'audio/musique08.mp3' },
-      { title: 'Musique 09', artist: 'La Rouxe', file: 'audio/musique09.mp3' },
-      { title: 'Musique 10', artist: 'La Rouxe', file: 'audio/musique10.mp3' },
-      { title: 'Musique 11', artist: 'La Rouxe', file: 'audio/musique11.mp3' },
-      { title: 'Musique 12', artist: 'La Rouxe', file: 'audio/musique12.mp3' },
-      { title: 'Musique 13', artist: 'La Rouxe', file: 'audio/musique13.mp3' },
-      { title: 'Musique 14', artist: 'La Rouxe', file: 'audio/musique14.mp3' },
-      { title: 'Musique 15', artist: 'La Rouxe', file: 'audio/musique15.mp3' },
-      { title: 'Musique 16', artist: 'La Rouxe', file: 'audio/musique16.mp3' },
-      { title: 'Musique 17', artist: 'La Rouxe', file: 'audio/musique17.mp3' },
-      { title: 'Musique 18', artist: 'La Rouxe', file: 'audio/musique18.mp3' },
-      { title: 'Musique 19', artist: 'La Rouxe', file: 'audio/musique19.mp3' },
-      { title: 'Musique 20', artist: 'La Rouxe', file: 'audio/musique20.mp3' }
-    ];
-
-    const soundEffects = [
-      { name: '🔊 Air Horn', file: 'sfx/airhorn.mp3' },
-      { name: '👏 Applaudissements', file: 'sfx/applaudissements.mp3' },
-      { name: '😂 Rire', file: 'sfx/rire.mp3' },
-      { name: '🥁 Roulement', file: 'sfx/roulement.mp3' },
-      { name: '❌ Buzzer', file: 'sfx/buzzer.mp3' },
-      { name: '🎉 Fête', file: 'sfx/fete.mp3' },
-      { name: '🚨 Alerte', file: 'sfx/alerte.mp3' },
-      { name: '👻 Suspense', file: 'sfx/suspense.mp3' },
-      { name: '💥 Explosion', file: 'sfx/explosion.mp3' },
-      { name: '🐓 Cocorico', file: 'sfx/cocorico.mp3' }
-    ];
-
+    let tracks = [];
+    let soundEffects = [];
     const mainAudio = document.getElementById('mainAudio');
     const playlist = document.getElementById('playlist');
     const soundboard = document.getElementById('soundboard');
@@ -199,33 +144,78 @@
     const volumeBar = document.getElementById('volumeBar');
     let currentIndex = 0;
 
+    async function loadData() {
+      try {
+        const [tracksRes, sfxRes] = await Promise.all([
+          fetch('tracks.json'),
+          fetch('sfx.json')
+        ]);
+
+        if (!tracksRes.ok || !sfxRes.ok) {
+          throw new Error('Impossible de charger les fichiers JSON');
+        }
+
+        tracks = await tracksRes.json();
+        soundEffects = await sfxRes.json();
+
+        renderPlaylist();
+        renderSoundboard();
+
+        if (tracks.length > 0) {
+          loadTrack(0);
+          currentStatus.textContent = 'Prête à être lue';
+        } else {
+          currentTrack.textContent = 'Aucune musique trouvée';
+          currentStatus.textContent = 'Ajoute une entrée dans tracks.json';
+        }
+      } catch (error) {
+        currentTrack.textContent = 'Erreur de chargement';
+        currentStatus.textContent = 'Vérifie tracks.json et sfx.json';
+        console.error(error);
+      }
+    }
+
     function renderPlaylist() {
       playlist.innerHTML = '';
+
+      if (tracks.length === 0) {
+        playlist.innerHTML = '<div class="track-item"><div class="track-info"><div class="track-title">Aucune musique</div><div class="track-subtitle">Ajoute un élément dans tracks.json</div></div></div>';
+        return;
+      }
+
       tracks.forEach((track, index) => {
         const item = document.createElement('div');
         item.className = 'track-item';
         item.innerHTML = `
           <div class="track-info">
-            <div class="track-title">${track.title}</div>
-            <div class="track-subtitle">${track.artist}</div>
+            <div class="track-title">${track.title || 'Sans titre'}</div>
+            <div class="track-subtitle">${track.artist || 'Artiste inconnu'}</div>
           </div>
           <button class="btn-primary">Jouer</button>
         `;
+
         item.querySelector('button').addEventListener('click', () => {
           loadTrack(index);
           mainAudio.play();
           currentStatus.textContent = 'Lecture en cours';
         });
+
         playlist.appendChild(item);
       });
     }
 
     function renderSoundboard() {
       soundboard.innerHTML = '';
+
+      if (soundEffects.length === 0) {
+        soundboard.innerHTML = '<div class="track-item"><div class="track-info"><div class="track-title">Aucun bruitage</div><div class="track-subtitle">Ajoute un élément dans sfx.json</div></div></div>';
+        return;
+      }
+
       soundEffects.forEach((effect) => {
         const btn = document.createElement('button');
         btn.className = 'sfx-btn';
-        btn.textContent = effect.name;
+        btn.textContent = effect.name || 'Bruitage';
         btn.addEventListener('click', () => {
           const sfx = new Audio(effect.file);
           sfx.volume = 1;
@@ -236,14 +226,16 @@
     }
 
     function loadTrack(index) {
+      if (tracks.length === 0) return;
       currentIndex = index;
       mainAudio.src = tracks[index].file;
-      currentTrack.textContent = `${tracks[index].title} — ${tracks[index].artist}`;
+      currentTrack.textContent = `${tracks[index].title || 'Sans titre'} — ${tracks[index].artist || 'Artiste inconnu'}`;
       currentStatus.textContent = 'Prête à être lue';
       progressBar.value = 0;
     }
 
     document.getElementById('playBtn').addEventListener('click', () => {
+      if (tracks.length === 0) return;
       if (!mainAudio.src) loadTrack(currentIndex);
       mainAudio.play();
       currentStatus.textContent = 'Lecture en cours';
@@ -262,6 +254,7 @@
     });
 
     document.getElementById('prevBtn').addEventListener('click', () => {
+      if (tracks.length === 0) return;
       currentIndex = (currentIndex - 1 + tracks.length) % tracks.length;
       loadTrack(currentIndex);
       mainAudio.play();
@@ -269,6 +262,7 @@
     });
 
     document.getElementById('nextBtn').addEventListener('click', () => {
+      if (tracks.length === 0) return;
       currentIndex = (currentIndex + 1) % tracks.length;
       loadTrack(currentIndex);
       mainAudio.play();
@@ -292,6 +286,7 @@
     });
 
     mainAudio.addEventListener('ended', () => {
+      if (tracks.length === 0) return;
       currentIndex = (currentIndex + 1) % tracks.length;
       loadTrack(currentIndex);
       mainAudio.play();
@@ -299,9 +294,7 @@
     });
 
     mainAudio.volume = volumeBar.value;
-    renderPlaylist();
-    renderSoundboard();
-    loadTrack(0);
+    loadData();
   </script>
 </body>
 </html>
